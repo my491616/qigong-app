@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>宇宙發功</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@200;300;400;700&family=Noto+Sans+TC:wght@200;300;400&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --cosmos-1:#04040d;
+  --cosmos-2:#080818;
+  --cosmos-3:#0d0d25;
+  --cosmos-4:#111130;
+  --nebula-rose:rgba(180,100,160,.12);
+  --nebula-blue:rgba(60,80,200,.1);
+  --nebula-teal:rgba(40,160,180,.08);
+  --gold:#c9a96b;
+  --gold-soft:#e0c98a;
+  --gold-dim:rgba(200,165,100,.35);
+  --gold-glow:rgba(200,165,100,.18);
+  --text:#ece4d5;
+  --text-soft:#b8a98a;
+  --text-dim:#6e6050;
+  --surface:rgba(255,255,255,.035);
+  --surface-hover:rgba(255,255,255,.06);
+  --border:rgba(255,255,255,.07);
+  --border-gold:rgba(200,165,100,.22);
+}
+
+html,body{height:100%;overflow-x:hidden;}
+
+body{
+  background:var(--cosmos-1);
+  color:var(--text);
+  font-family:'Noto Sans TC',sans-serif;
+  font-weight:300;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* ═══════════════════════════════
+   COSMIC BACKGROUND
+═══════════════════════════════ */
+
+#cosmos-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(40,30,100,.4) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 80% at 80% 70%, rgba(80,20,80,.3) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 50% at 50% 0%, rgba(20,40,120,.35) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 40% at 10% 80%, rgba(20,80,100,.2) 0%, transparent 60%),
+    linear-gradient(160deg, #04040e 0%, #080820 40%, #060612 100%);
+  animation:cosmos-drift 30s ease-in-out infinite alternate;
+}
+@keyframes cosmos-drift{
+  0%{filter:hue-rotate(0deg) brightness(1);}
+  50%{filter:hue-rotate(8deg) brightness(1.04);}
+  100%{filter:hue-rotate(-6deg) brightness(.98);}
+}
+
+#starfield{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+.s{position:absolute;border-radius:50%;background:#fff;animation:tw var(--d) ease-in-out infinite var(--dl);}
+@keyframes tw{0%,100%{opacity:var(--lo);}50%{opacity:var(--hi);}}
+
+/* milky way band */
+#milky{
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 200% 30% at 50% 55%,rgba(120,100,200,.06) 0%,transparent 100%);
+  mix-blend-mode:screen;
+}
+
+/* Floating nebula particles */
+#nebula-particles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+.np{position:absolute;border-radius:50%;filter:blur(40px);animation:np-float var(--nd) ease-in-out infinite var(--ndl) alternate;}
+@keyframes np-float{from{transform:translate(0,0) scale(1);opacity:var(--nlo);}to{transform:translate(var(--nx),var(--ny)) scale(1.1);opacity:var(--nhi);}}
+
+/* ═══════════════════════════════
+   LAYOUT
+═══════════════════════════════ */
+
+.container{
+  max-width:440px;margin:0 auto;
+  padding:2rem 1.4rem 4rem;
+  position:relative;z-index:10;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+}
+
+/* Page transitions */
+.page{width:100%;display:none;flex-direction:column;align-items:center;}
+.page.active{display:flex;animation:pg-in .9s cubic-bezier(.2,.8,.3,1) both;}
+.page.out{animation:pg-out .5s cubic-bezier(.5,0,.8,.3) both;}
+@keyframes pg-in{from{opacity:0;transform:translateY(22px) scale(.99);}to{opacity:1;transform:none;}}
+@keyframes pg-out{to{opacity:0;transform:translateY(-14px);}}
+
+/* ═══════════════════════════════
+   TYPOGRAPHY
+═══════════════════════════════ */
+
+.step-lbl{
+  font-size:.68rem;color:var(--text-dim);letter-spacing:.28em;text-align:center;
+  margin-bottom:.6rem;text-transform:none;
+}
+.sec-title{
+  font-family:'Noto Serif TC',serif;font-weight:300;
+  font-size:1.05rem;color:var(--gold);text-align:center;
+  letter-spacing:.22em;margin-bottom:.35rem;line-height:1.6;
+}
+.sec-hint{font-size:.75rem;color:var(--text-dim);text-align:center;margin-bottom:1.4rem;letter-spacing:.12em;line-height:1.6;}
+.guide-txt{
+  font-family:'Noto Serif TC',serif;font-weight:200;
+  font-size:.98rem;color:var(--text-soft);text-align:center;
+  line-height:2.1;letter-spacing:.09em;min-height:68px;
+  padding:.9rem .5rem;transition:opacity .8s ease;
+}
+.divider{width:48px;height:1px;background:var(--border-gold);margin:1.4rem auto;}
+
+/* ═══════════════════════════════
+   BUTTONS
+═══════════════════════════════ */
+
+.btn-p{
+  background:linear-gradient(135deg,rgba(170,120,50,.9),rgba(210,175,90,.95));
+  color:var(--cosmos-1);border:none;
+  padding:.9rem 2.6rem;border-radius:60px;
+  font-size:.9rem;font-family:'Noto Sans TC',sans-serif;font-weight:400;
+  letter-spacing:.18em;cursor:pointer;transition:all .4s cubic-bezier(.2,.8,.3,1);
+  box-shadow:0 4px 24px rgba(200,165,100,.25),0 1px 0 rgba(255,255,255,.15) inset;
+  width:100%;max-width:260px;position:relative;overflow:hidden;
+}
+.btn-p::after{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.12),transparent);border-radius:inherit;}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(200,165,100,.4),0 1px 0 rgba(255,255,255,.2) inset;}
+.btn-p:active{transform:scale(.97);}
+
+.btn-g{
+  background:var(--surface);color:var(--text-soft);
+  border:1px solid var(--border-gold);
+  padding:.78rem 2rem;border-radius:60px;
+  font-size:.85rem;font-family:'Noto Sans TC',sans-serif;font-weight:300;
+  cursor:pointer;transition:all .35s;letter-spacing:.12em;
+  width:100%;max-width:260px;margin-top:.7rem;
+  backdrop-filter:blur(8px);
+}
+.btn-g:hover{border-color:var(--gold);color:var(--gold);background:var(--surface-hover);}
+
+.btn-stop{
+  background:transparent;color:rgba(200,120,120,.65);
+  border:1px solid rgba(200,100,100,.2);
+  padding:.7rem 2rem;border-radius:60px;
+  font-size:.82rem;font-family:'Noto Sans TC',sans-serif;font-weight:300;
+  cursor:pointer;transition:all .3s;letter-spacing:.1em;
+  width:100%;max-width:260px;margin-top:.6rem;
+}
+.btn-stop:hover{background:rgba(200,80,80,.08);border-color:rgba(220,100,100,.4);color:rgba(220,120,120,.9);}
+
+.back-lnk{
+  color:var(--text-dim);font-size:.75rem;cursor:pointer;text-align:center;
+  margin-top:1.3rem;letter-spacing:.12em;opacity:.7;
+  text-decoration:none;border-bottom:1px solid transparent;
+  transition:all .3s;padding-bottom:1px;
+}
+.back-lnk:hover{color:var(--gold-soft);opacity:1;border-bottom-color:var(--gold-dim);}
+.target-tag{
+  display:inline-block;border-radius:60px;
+  padding:.3rem 1.1rem;font-size:.75rem;letter-spacing:.16em;
+  margin:.5rem 0 1rem;font-family:'Noto Serif TC',serif;font-weight:300;
+  border:1px solid;backdrop-filter:blur(6px);
+}
+
+/* ═══════════════════════════════
+   TITLE PAGE
+═══════════════════════════════ */
+
+.emblem-wrap{width:140px;height:140px;position:relative;margin:2.5rem auto 1.4rem;}
+.e-ring{position:absolute;border-radius:50%;border:1px solid var(--gold-dim);animation:e-spin 28s linear infinite;}
+.e-ring:nth-child(1){inset:0;}
+.e-ring:nth-child(2){inset:14px;border-style:dashed;opacity:.5;animation-direction:reverse;animation-duration:20s;}
+.e-ring:nth-child(3){inset:28px;opacity:.35;animation-duration:35s;}
+.e-core{
+  position:absolute;inset:34px;border-radius:50%;
+  border:1px solid rgba(200,165,100,.55);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-family:'Noto Serif TC',serif;color:var(--gold);
+  background:radial-gradient(circle,rgba(200,165,100,.15) 0%,transparent 70%);
+  animation:core-breathe 5s ease-in-out infinite;
+}
+@keyframes e-spin{to{transform:rotate(360deg);}}
+@keyframes core-breathe{
+  0%,100%{box-shadow:0 0 20px rgba(200,165,100,.2);}
+  50%{box-shadow:0 0 45px rgba(200,165,100,.45);}
+}
+
+.app-title{
+  font-family:'Noto Serif TC',serif;font-weight:700;
+  font-size:2.2rem;color:var(--gold);letter-spacing:.35em;
+  text-shadow:0 0 40px rgba(200,165,100,.45),0 0 80px rgba(200,165,100,.2);
+  margin-bottom:.5rem;text-align:center;
+}
+.app-sub{font-size:.75rem;color:var(--text-dim);letter-spacing:.24em;text-align:center;margin-bottom:3rem;line-height:2;}
+
+/* ═══════════════════════════════
+   SELECT PAGE
+═══════════════════════════════ */
+
+.parts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;width:100%;margin-bottom:1.4rem;}
+.part-btn{
+  border-radius:16px;padding:.95rem .4rem;text-align:center;
+  cursor:pointer;transition:all .35s cubic-bezier(.2,.8,.3,1);
+  font-size:.75rem;font-family:'Noto Sans TC',sans-serif;font-weight:300;
+  letter-spacing:.06em;border:1px solid;
+  background:var(--surface);backdrop-filter:blur(8px);
+}
+.part-btn .icon{font-size:1.5rem;display:block;margin-bottom:.35rem;}
+.pb-neck{border-color:rgba(220,130,200,.2);color:rgba(220,130,200,.6);}
+.pb-back{border-color:rgba(240,140,80,.2);color:rgba(240,140,80,.6);}
+.pb-head{border-color:rgba(130,150,245,.2);color:rgba(130,150,245,.6);}
+.pb-knee{border-color:rgba(80,210,140,.2);color:rgba(80,210,140,.6);}
+.pb-gut{border-color:rgba(245,210,70,.2);color:rgba(245,210,70,.6);}
+.pb-all{border-color:rgba(200,165,100,.2);color:rgba(200,165,100,.6);}
+.pb-neck.selected{border-color:#dc82c8;color:#dc82c8;background:rgba(220,130,200,.1);box-shadow:0 4px 20px rgba(220,130,200,.2),0 0 0 1px rgba(220,130,200,.15);transform:translateY(-3px) scale(1.02);}
+.pb-back.selected{border-color:#f08c50;color:#f08c50;background:rgba(240,140,80,.1);box-shadow:0 4px 20px rgba(240,140,80,.2),0 0 0 1px rgba(240,140,80,.15);transform:translateY(-3px) scale(1.02);}
+.pb-head.selected{border-color:#8296f5;color:#8296f5;background:rgba(130,150,245,.1);box-shadow:0 4px 20px rgba(130,150,245,.2),0 0 0 1px rgba(130,150,245,.15);transform:translateY(-3px) scale(1.02);}
+.pb-knee.selected{border-color:#50d28c;color:#50d28c;background:rgba(80,210,140,.1);box-shadow:0 4px 20px rgba(80,210,140,.2),0 0 0 1px rgba(80,210,140,.15);transform:translateY(-3px) scale(1.02);}
+.pb-gut.selected{border-color:#f5d246;color:#f5d246;background:rgba(245,210,70,.1);box-shadow:0 4px 20px rgba(245,210,70,.2),0 0 0 1px rgba(245,210,70,.15);transform:translateY(-3px) scale(1.02);}
+.pb-all.selected{border-color:#c9a96b;color:#c9a96b;background:rgba(200,165,100,.1);box-shadow:0 4px 20px rgba(200,165,100,.2),0 0 0 1px rgba(200,165,100,.15);transform:translateY(-3px) scale(1.02);}
+
+.dur-row{display:flex;gap:.65rem;margin-bottom:1.9rem;width:100%;}
+.dur-btn{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:.65rem;text-align:center;cursor:pointer;
+  color:var(--text-dim);font-size:.82rem;font-family:'Noto Sans TC',sans-serif;
+  font-weight:300;transition:all .3s;letter-spacing:.06em;backdrop-filter:blur(6px);
+}
+.dur-btn.selected,.dur-btn:hover{border-color:rgba(78,210,185,.5);color:rgba(78,210,185,.9);background:rgba(78,210,185,.07);}
+
+/* ═══════════════════════════════
+   CONFIRM PAGE
+═══════════════════════════════ */
+
+.confirm-card{
+  border-radius:22px;padding:2rem 1.5rem;width:100%;text-align:center;
+  margin:1rem 0 2rem;border:1px solid var(--border);
+  background:var(--surface);backdrop-filter:blur(16px);
+  position:relative;overflow:hidden;
+}
+.confirm-card::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  background:radial-gradient(ellipse 100% 60% at 50% 0%,rgba(200,165,100,.06) 0%,transparent 70%);
+}
+.confirm-icon{font-size:2.4rem;margin-bottom:.5rem;}
+.confirm-name{font-family:'Noto Serif TC',serif;font-weight:400;font-size:1.4rem;letter-spacing:.22em;margin-bottom:.35rem;}
+.confirm-dur{font-size:.82rem;color:var(--text-dim);letter-spacing:.12em;}
+.confirm-note{font-size:.75rem;color:var(--text-dim);line-height:2;margin-top:1.2rem;letter-spacing:.07em;}
+
+/* ═══════════════════════════════
+   BREATH ARENA
+═══════════════════════════════ */
+
+.breath-arena{
+  width:240px;height:240px;position:relative;
+  margin:1.5rem auto;display:flex;align-items:center;justify-content:center;
+}
+.b-outer{
+  position:absolute;inset:0;border-radius:50%;border:1px solid;
+  animation:b-rotate 20s linear infinite;
+}
+.b-outer::before{
+  content:'';position:absolute;top:2px;left:50%;transform:translateX(-50%);
+  width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7;
+}
+/* energy rings that breathe */
+.b-ring-breath{
+  position:absolute;border-radius:50%;border:1px solid;
+  animation:b-breathe var(--bd,4s) ease-in-out infinite var(--bdl,0s);
+}
+@keyframes b-breathe{
+  0%,100%{transform:scale(1);opacity:.4;}
+  50%{transform:scale(1.15);opacity:.85;}
+}
+@keyframes b-rotate{to{transform:rotate(360deg);}}
+
+.b-core{
+  width:120px;height:120px;border-radius:50%;
+  border:1px solid;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:3;
+  position:absolute;transition:transform 1s ease;
+  backdrop-filter:blur(4px);
+}
+.b-lbl{font-family:'Noto Serif TC',serif;font-weight:300;font-size:.8rem;letter-spacing:.2em;margin-bottom:.2rem;}
+.b-num{font-size:2.2rem;font-weight:200;line-height:1;}
+
+/* ═══════════════════════════════
+   ORB STAGE (MEDITATE)
+═══════════════════════════════ */
+
+.orb-stage{
+  width:290px;height:290px;position:relative;
+  margin:.6rem auto;display:flex;align-items:center;justify-content:center;
+}
+/* concentric rings */
+.o-ring{
+  position:absolute;border-radius:50%;border:1px solid;
+  animation:o-ring-pulse var(--ord,4s) ease-in-out infinite var(--orl,0s);
+}
+@keyframes o-ring-pulse{
+  0%,100%{transform:scale(1);opacity:.3;}
+  50%{transform:scale(1.05);opacity:.8;}
+}
+/* energy rays rotating */
+.o-rays{position:absolute;inset:0;animation:rays-rot 12s linear infinite;}
+.o-ray{
+  position:absolute;left:50%;top:50%;
+  width:1.5px;border-radius:2px;
+  transform-origin:0 0;
+  animation:ray-pulse var(--rpd,2.5s) ease-in-out infinite var(--rpd2,0s);
+}
+@keyframes rays-rot{to{transform:rotate(360deg);}}
+@keyframes ray-pulse{
+  0%,100%{opacity:.15;height:16px;}
+  50%{opacity:.75;height:55px;}
+}
+/* particle burst */
+.o-particles{position:absolute;inset:0;animation:particles-rot 18s linear infinite reverse;}
+.o-particle{
+  position:absolute;left:50%;top:50%;
+  width:3px;height:3px;border-radius:50%;
+  transform-origin:0 0;
+  animation:p-twinkle var(--ptd,1.5s) ease-in-out infinite var(--ptdl,0s);
+}
+@keyframes particles-rot{to{transform:rotate(360deg);}}
+@keyframes p-twinkle{
+  0%,100%{opacity:.2;transform:scale(.8);}
+  50%{opacity:1;transform:scale(1.5);}
+}
+/* core orb */
+.o-core{
+  position:absolute;width:72px;height:72px;border-radius:50%;z-index:5;
+  animation:o-core-breathe 3s ease-in-out infinite;
+}
+@keyframes o-core-breathe{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.18);}
+}
+
+/* ═══════════════════════════════
+   EMIT SCREEN
+═══════════════════════════════ */
+
+.emit-screen{
+  width:100%;aspect-ratio:9/17;max-height:300px;
+  border-radius:28px;position:relative;overflow:hidden;
+  margin:.7rem 0;display:flex;align-items:center;justify-content:center;
+  border:1.5px solid;
+}
+.emit-nebula{
+  position:absolute;inset:0;
+  animation:emit-breathe 2.8s ease-in-out infinite;
+}
+@keyframes emit-breathe{0%,100%{opacity:.65;transform:scale(1);}50%{opacity:1;transform:scale(1.04);}}
+.emit-wave-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+.emit-w{
+  position:absolute;border-radius:50%;border:1px solid;
+  animation:emit-wave 3.5s ease-out infinite;
+}
+.emit-w:nth-child(2){animation-delay:1.17s;}
+.emit-w:nth-child(3){animation-delay:2.33s;}
+@keyframes emit-wave{
+  0%{width:24px;height:24px;opacity:.9;}
+  100%{width:360px;height:360px;opacity:0;}
+}
+.emit-center{
+  position:absolute;width:56px;height:56px;border-radius:50%;z-index:4;
+  animation:o-core-breathe 2.2s ease-in-out infinite;
+}
+.emit-lbl{z-index:5;text-align:center;font-family:'Noto Serif TC',serif;font-weight:200;font-size:.88rem;letter-spacing:.2em;line-height:2.2;}
+
+.timer-big{
+  font-size:3.4rem;font-family:'Noto Serif TC',serif;font-weight:200;
+  color:var(--gold);text-align:center;letter-spacing:.08em;
+  text-shadow:0 0 28px rgba(200,165,100,.5);margin:.3rem 0;
+}
+.prog-wrap{width:100%;height:3px;background:rgba(255,255,255,.06);border-radius:2px;margin:.4rem 0 1.2rem;overflow:hidden;}
+.prog-bar{height:100%;border-radius:2px;transition:width 1s linear;width:0%;}
+
+/* ═══════════════════════════════
+   CLOSE PAGE
+═══════════════════════════════ */
+
+.close-orb{width:80px;height:80px;border-radius:50%;margin:2rem auto 1rem;animation:o-core-breathe 3s ease-in-out infinite;}
+.feel-row{display:flex;justify-content:center;gap:.65rem;flex-wrap:wrap;margin-bottom:1rem;}
+.feel-btn{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:50px;padding:.5rem 1rem;font-size:.8rem;
+  font-family:'Noto Sans TC',sans-serif;font-weight:300;
+  color:var(--text-dim);cursor:pointer;transition:all .3s;letter-spacing:.06em;
+}
+.feel-btn.active,.feel-btn:hover{border-color:rgba(78,210,185,.5);color:rgba(78,210,185,.9);background:rgba(78,210,185,.07);}
+
+/* ═══════════════════════════════
+   MUSIC INDICATOR
+═══════════════════════════════ */
+
+#music-btn{
+  position:fixed;top:16px;right:16px;z-index:200;
+  display:flex;align-items:center;gap:5px;
+  background:rgba(4,4,18,.6);border:1px solid var(--border-gold);
+  border-radius:50px;padding:7px 13px;cursor:pointer;
+  transition:all .3s;backdrop-filter:blur(12px);
+}
+#music-btn:hover{border-color:var(--gold);}
+.m-icon{font-size:12px;color:var(--gold);opacity:.8;}
+.m-bars{display:flex;align-items:flex-end;gap:2px;height:13px;}
+.m-bar{width:2.5px;background:var(--gold);border-radius:1px;animation:mb var(--mbd,.6s) ease-in-out infinite alternate;opacity:.8;}
+.m-bar:nth-child(1){--mbd:.5s;height:5px;}
+.m-bar:nth-child(2){--mbd:.72s;height:10px;animation-delay:.1s;}
+.m-bar:nth-child(3){--mbd:.58s;height:7px;animation-delay:.2s;}
+.m-bar:nth-child(4){--mbd:.85s;height:11px;animation-delay:.05s;}
+@keyframes mb{from{transform:scaleY(.25);}to{transform:scaleY(1);}}
+.m-bars.paused .m-bar{animation-play-state:paused;transform:scaleY(.25);}
+
+/* ═══════════════════════════════
+   VOICE STATUS DOT
+═══════════════════════════════ */
+
+#voice-dot{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  z-index:200;display:flex;align-items:center;gap:7px;
+  background:rgba(4,4,18,.55);border:1px solid var(--border);
+  border-radius:50px;padding:5px 14px;
+  font-size:.7rem;letter-spacing:.12em;color:var(--text-dim);
+  backdrop-filter:blur(10px);opacity:0;transition:opacity .5s;pointer-events:none;
+}
+#voice-dot.speaking{opacity:1;}
+.vd-ring{width:8px;height:8px;border-radius:50%;animation:vd-pulse 1.2s ease-in-out infinite;}
+@keyframes vd-pulse{0%,100%{transform:scale(1);opacity:.7;}50%{transform:scale(1.5);opacity:1;}}
+
+</style>
+</head>
+<body>
+
+<!-- Cosmic BG -->
+<div id="cosmos-bg"></div>
+<div id="starfield"></div>
+<div id="milky"></div>
+<div id="nebula-particles"></div>
+
+<!-- Music control -->
+<div id="music-btn" onclick="toggleMusic()">
+  <span class="m-icon">♫</span>
+  <div class="m-bars" id="m-bars">
+    <div class="m-bar"></div><div class="m-bar"></div>
+    <div class="m-bar"></div><div class="m-bar"></div>
+  </div>
+</div>
+
+<!-- Voice speaking indicator -->
+<div id="voice-dot">
+  <div class="vd-ring" id="vd-ring" style="background:#c9a96b;"></div>
+  <span id="vd-text">語音導引中</span>
+</div>
+
+<div class="container">
+
+<!-- ▓ PAGE 1: TITLE ▓ -->
+<div class="page active" id="p-title">
+  <div class="emblem-wrap">
+    <div class="e-ring"></div>
+    <div class="e-ring"></div>
+    <div class="e-ring"></div>
+    <div class="e-core">氣</div>
+  </div>
+  <h1 class="app-title">宇宙發功</h1>
+  <p class="app-sub">念轉意 · 引宇宙大智慧 · 修身療癒</p>
+  <div class="divider"></div>
+  <button class="btn-p" onclick="goTo('p-select')">開始發功</button>
+  <button class="btn-g" onclick="tryVoice()">♪ 試聽語音導引</button>
+</div>
+
+<!-- ▓ PAGE 2: SELECT ▓ -->
+<div class="page" id="p-select">
+  <div class="step-lbl">第一步 · 設定</div>
+  <div class="sec-title">選擇需要療癒的部位</div>
+  <p class="sec-hint">靜下心來，感受身體的需求</p>
+  <div class="parts-grid">
+    <div class="part-btn pb-neck" data-part="肩頸" data-hex="#dc82c8" data-rgb="220,130,200" data-icon="◈" onclick="selectPart(this)">
+      <span class="icon">🌸</span>肩頸痠痛
+    </div>
+    <div class="part-btn pb-back" data-part="腰背" data-hex="#f08c50" data-rgb="240,140,80" data-icon="◈" onclick="selectPart(this)">
+      <span class="icon">🔥</span>腰背緊繃
+    </div>
+    <div class="part-btn pb-head" data-part="頭部" data-hex="#8296f5" data-rgb="130,150,245" data-icon="◈" onclick="selectPart(this)">
+      <span class="icon">🌙</span>頭部疲勞
+    </div>
+    <div class="part-btn pb-knee" data-part="膝蓋" data-hex="#50d28c" data-rgb="80,210,140" data-icon="◈" onclick="selectPart(this)">
+      <span class="icon">🍃</span>膝蓋不適
+    </div>
+    <div class="part-btn pb-gut" data-part="腸胃" data-hex="#f5d246" data-rgb="245,210,70" data-icon="◈" onclick="selectPart(this)">
+      <span class="icon">☀️</span>腸胃不順
+    </div>
+    <div class="part-btn pb-all" data-part="全身" data-hex="#c9a96b" data-rgb="200,165,100" data-icon="◈" onclick="selectPart(this)">
+      <span class="icon">✦</span>全身調和
+    </div>
+  </div>
+  <div class="sec-title" style="margin-bottom:.4rem;">發功時長</div>
+  <div class="divider" style="margin:.4rem auto .9rem;"></div>
+  <div class="dur-row">
+    <div class="dur-btn" data-min="3" onclick="selectDur(this)">3 分鐘</div>
+    <div class="dur-btn selected" data-min="5" onclick="selectDur(this)">5 分鐘</div>
+    <div class="dur-btn" data-min="10" onclick="selectDur(this)">10 分鐘</div>
+  </div>
+  <button class="btn-p" onclick="goConfirm()">確認 · 進入療程</button>
+  <span class="back-lnk" onclick="goTo('p-title')">← 返回首頁</span>
+</div>
+
+<!-- ▓ PAGE 3: CONFIRM ▓ -->
+<div class="page" id="p-confirm">
+  <div class="step-lbl">確認療程</div>
+  <div class="confirm-card" id="confirm-card">
+    <div class="confirm-icon" id="ci">🌸</div>
+    <div class="confirm-name" id="cn">肩頸</div>
+    <div style="height:.5rem;"></div>
+    <div class="confirm-dur" id="cd">發功時長　5 分鐘</div>
+    <div class="confirm-note">請在安靜舒適的環境中進行<br>準備好後，按「開始療程」<br>過程中可隨時按「結束療程」離開</div>
+  </div>
+  <button class="btn-p" onclick="beginBreath()">▶ 開始療程</button>
+  <button class="btn-g" onclick="goTo('p-select')">← 重新選擇</button>
+  <span class="back-lnk" onclick="goTo('p-title')">返回首頁</span>
+</div>
+
+<!-- ▓ PAGE 4: BREATHE ▓ -->
+<div class="page" id="p-breathe">
+  <div class="step-lbl">第二步 · 淨心準備</div>
+  <div class="sec-title" id="breathe-title">跟隨呼吸節奏</div>
+  <div class="breath-arena" id="breath-arena"></div>
+  <div class="guide-txt" id="breathe-guide">請找一個安靜舒適的地方<br>放鬆肩膀，輕輕閉上眼睛</div>
+  <div class="target-tag" id="breathe-tag" style="color:#c9a96b;border-color:rgba(200,165,100,.4);background:rgba(200,165,100,.08);">目標：肩頸</div>
+  <button class="btn-p" id="breathe-next" style="display:none;margin-top:.5rem;" onclick="goTo('p-meditate')">進入意念引導 →</button>
+  <button class="btn-stop" onclick="stopSession()">✕ 結束療程</button>
+</div>
+
+<!-- ▓ PAGE 5: MEDITATE ▓ -->
+<div class="page" id="p-meditate">
+  <div class="step-lbl">第三步 · 意念引導</div>
+  <div class="orb-stage" id="orb-stage"></div>
+  <div class="guide-txt" id="med-guide"></div>
+  <div class="prog-wrap"><div class="prog-bar" id="med-prog"></div></div>
+  <button class="btn-p" id="emit-go" style="display:none;margin-top:.5rem;" onclick="goTo('p-emit')">開始發功 →</button>
+  <button class="btn-stop" onclick="stopSession()">✕ 結束療程</button>
+</div>
+
+<!-- ▓ PAGE 6: EMIT ▓ -->
+<div class="page" id="p-emit">
+  <div class="step-lbl">第四步 · 發功傳導</div>
+  <p style="font-family:'Noto Serif TC',serif;font-weight:200;font-size:.92rem;text-align:center;letter-spacing:.14em;line-height:2;margin:.3rem 0 .5rem;color:var(--text-soft);">
+    將手機螢幕靠近<br><strong id="emit-part" style="font-size:1.1rem;letter-spacing:.2em;font-weight:300;"></strong><br>感受能量傳入
+  </p>
+  <div class="emit-screen" id="emit-screen">
+    <div class="emit-nebula" id="emit-nebula"></div>
+    <div class="emit-wave-wrap">
+      <div class="emit-w"></div><div class="emit-w"></div><div class="emit-w"></div>
+    </div>
+    <div class="emit-center" id="emit-center"></div>
+    <div class="emit-lbl" id="emit-lbl">能量傳導中<br>請靠近患部</div>
+  </div>
+  <div class="timer-big" id="timer-big">05:00</div>
+  <div class="prog-wrap"><div class="prog-bar" id="emit-prog"></div></div>
+  <div class="guide-txt" id="emit-guide" style="font-size:.88rem;min-height:52px;"></div>
+  <button class="btn-p" onclick="finishEarly()">收功完成</button>
+  <button class="btn-stop" onclick="stopSession()">✕ 中止療程</button>
+</div>
+
+<!-- ▓ PAGE 7: CLOSE ▓ -->
+<div class="page" id="p-close">
+  <div class="close-orb" id="close-orb"></div>
+  <h2 class="sec-title" style="font-size:1.35rem;margin-bottom:.3rem;">發功圓滿</h2>
+  <div class="target-tag" id="close-tag">已療癒：肩頸</div>
+  <div class="guide-txt" style="font-size:.88rem;color:var(--text-dim);">
+    能量已完整傳遞<br>感謝宇宙智慧的流動<br>慢慢動動手指，輕輕睜開眼睛
+  </div>
+  <div class="divider"></div>
+  <p style="font-size:.76rem;color:var(--text-dim);letter-spacing:.14em;text-align:center;margin-bottom:.9rem;">這次的感受如何？</p>
+  <div class="feel-row">
+    <div class="feel-btn" onclick="selectFeel(this)">明顯改善</div>
+    <div class="feel-btn" onclick="selectFeel(this)">略有改善</div>
+    <div class="feel-btn" onclick="selectFeel(this)">持續觀察</div>
+  </div>
+  <div class="divider"></div>
+  <button class="btn-p" onclick="goTo('p-title')">🏠 返回主頁</button>
+  <button class="btn-g" onclick="restart()">再次發功</button>
+</div>
+
+</div><!-- end container -->
+
+<script>
+/* ══════════════════════════════
+   STATE
+══════════════════════════════ */
+let sPart='肩頸', sHex='#c9a96b', sRgb='200,165,100';
+let sMin=5;
+let bTimer=null, mTimer=null, eTimer=null;
+let eTotal=300, eLeft=300;
+let musicOn=true, speechOn=true, audioCtx=null;
+let voiceTimer=null;
+
+/* ══════════════════════════════
+   COSMIC BACKGROUND INIT
+══════════════════════════════ */
+(function initCosmos(){
+  // Stars
+  const sf=document.getElementById('starfield');
+  const types=[
+    {count:50,size:1,loMin:.05,loMax:.2,hiMin:.4,hiMax:.8},
+    {count:25,size:1.5,loMin:.03,loMax:.15,hiMin:.3,hiMax:.7},
+    {count:8,size:2,loMin:.02,loMax:.1,hiMin:.25,hiMax:.6}
+  ];
+  types.forEach(t=>{
+    for(let i=0;i<t.count;i++){
+      const s=document.createElement('div');
+      s.className='s';
+      const lo=(t.loMin+Math.random()*(t.loMax-t.loMin)).toFixed(2);
+      const hi=(t.hiMin+Math.random()*(t.hiMax-t.hiMin)).toFixed(2);
+      s.style.cssText=`width:${t.size}px;height:${t.size}px;`+
+        `top:${(Math.random()*100).toFixed(2)}%;left:${(Math.random()*100).toFixed(2)}%;`+
+        `--lo:${lo};--hi:${hi};--d:${(Math.random()*6+2).toFixed(1)}s;--dl:-${(Math.random()*8).toFixed(1)}s;`;
+      sf.appendChild(s);
+    }
+  });
+  // Nebula particles
+  const np=document.getElementById('nebula-particles');
+  const colors=['rgba(120,80,180,.12)','rgba(60,100,200,.1)','rgba(100,40,140,.1)','rgba(40,120,160,.09)','rgba(160,60,120,.08)'];
+  for(let i=0;i<7;i++){
+    const p=document.createElement('div');
+    p.className='np';
+    const w=120+Math.random()*200;
+    const nx=(-30+Math.random()*60).toFixed(0)+'px';
+    const ny=(-20+Math.random()*40).toFixed(0)+'px';
+    p.style.cssText=`width:${w}px;height:${w*(.6+Math.random()*.6)}px;`+
+      `top:${(Math.random()*100).toFixed(1)}%;left:${(Math.random()*100).toFixed(1)}%;`+
+      `background:${colors[i%colors.length]};`+
+      `--nd:${(12+Math.random()*18).toFixed(1)}s;--ndl:-${(Math.random()*15).toFixed(1)}s;`+
+      `--nx:${nx};--ny:${ny};--nlo:${(.04+Math.random()*.08).toFixed(2)};--nhi:${(.1+Math.random()*.15).toFixed(2)};`;
+    np.appendChild(p);
+  }
+})();
+
+/* ══════════════════════════════
+   NAV
+══════════════════════════════ */
+function goTo(id){
+  clearAll();
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg=document.getElementById(id);
+  pg.classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='p-meditate') initMeditate();
+  if(id==='p-emit') initEmit();
+}
+
+/* ══════════════════════════════
+   SELECT
+══════════════════════════════ */
+function selectPart(el){
+  document.querySelectorAll('.part-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  sPart=el.dataset.part; sHex=el.dataset.hex; sRgb=el.dataset.rgb;
+}
+function selectDur(el){
+  document.querySelectorAll('.dur-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected'); sMin=parseInt(el.dataset.min);
+}
+
+/* ══════════════════════════════
+   CONFIRM
+══════════════════════════════ */
+function goConfirm(){
+  if(!document.querySelector('.part-btn.selected')){speak('請先選擇您想療癒的部位。');return;}
+  const sel=document.querySelector('.part-btn.selected');
+  document.getElementById('ci').textContent=sel.querySelector('.icon').textContent;
+  const cn=document.getElementById('cn'); cn.textContent=sPart; cn.style.color=sHex;
+  document.getElementById('cd').textContent=`發功時長　${sMin} 分鐘`;
+  const card=document.getElementById('confirm-card');
+  card.style.borderColor=`rgba(${sRgb},.22)`;
+  card.style.background=`linear-gradient(160deg,rgba(${sRgb},.06) 0%,rgba(4,4,18,.6) 100%)`;
+  goTo('p-confirm');
+  speak(`您選擇了${sPart}，發功時長${sMin}分鐘。請在安靜的環境準備好，再按開始療程。`);
+}
+
+/* ══════════════════════════════
+   BREATHE
+══════════════════════════════ */
+function beginBreath(){
+  buildBreathArena();
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('p-breathe').classList.add('active');
+  window.scrollTo(0,0);
+  const tag=document.getElementById('breathe-tag');
+  tag.textContent=`目標 · ${sPart}`;
+  tag.style.color=sHex; tag.style.borderColor=`rgba(${sRgb},.38)`; tag.style.background=`rgba(${sRgb},.08)`;
+  document.getElementById('breathe-next').style.display='none';
+  startBreathing();
+  setTimeout(()=>speak('請找一個安靜舒適的地方，放鬆肩膀。輕輕閉上眼睛，跟隨呼吸的節奏。'),600);
+}
+
+function buildBreathArena(){
+  const h=sHex, r=sRgb;
+  document.getElementById('breath-arena').innerHTML=`
+    <div class="b-outer" style="border-color:rgba(${r},.25);color:rgba(${r},.5);"></div>
+    <div class="b-ring-breath" style="inset:14px;border-color:rgba(${r},.3);--bd:4s;--bdl:0s;"></div>
+    <div class="b-ring-breath" style="inset:30px;border-color:rgba(${r},.4);--bd:4s;--bdl:.5s;"></div>
+    <div class="b-ring-breath" style="inset:48px;border-color:rgba(${r},.55);--bd:4s;--bdl:1s;"></div>
+    <div class="b-core" id="b-core" style="border-color:rgba(${r},.6);background:radial-gradient(circle,rgba(${r},.18) 0%,rgba(4,4,18,.4) 100%);">
+      <span class="b-lbl" id="b-lbl" style="color:${h};">吸氣</span>
+      <span class="b-num" id="b-num" style="color:${h};">4</span>
+    </div>`;
+}
+
+function startBreathing(){
+  clearInterval(bTimer);
+  const phases=[
+    {l:'吸氣',d:4,speak:'吸氣'},
+    {l:'持氣',d:4,speak:'持氣'},
+    {l:'呼氣',d:6,speak:'呼氣'}
+  ];
+  const guides=[
+    '請找一個安靜舒適的地方<br>放鬆肩膀，輕輕閉上眼睛',
+    '將注意力帶回身體的中心<br>感受此刻的寧靜',
+    `將意念輕輕集中<br>在你的${sPart}`
+  ];
+  const vGuides=[
+    '請找一個安靜舒適的地方，放鬆肩膀，輕輕閉上眼睛。',
+    '將注意力帶回身體的中心，感受此刻的寧靜。',
+    `將意念輕輕集中，在你的${sPart}。`
+  ];
+  let pi=0, tl=4, done=0, lastSpokenPhase=-1;
+  function setPhase(){
+    const lbl=document.getElementById('b-lbl');
+    const num=document.getElementById('b-num');
+    const core=document.getElementById('b-core');
+    if(lbl) lbl.textContent=phases[pi].l;
+    if(num) num.textContent=Math.max(tl,0);
+    if(core){
+      if(pi===0) core.style.animation='b-expand 4s ease-in-out forwards';
+      else if(pi===1) core.style.animation='none';
+      else core.style.animation='b-contract 6s ease-in-out forwards';
+    }
+  }
+  const style=document.createElement('style');
+  style.textContent=`
+    @keyframes b-expand{from{transform:scale(1);}to{transform:scale(1.22);}}
+    @keyframes b-contract{from{transform:scale(1.22);}to{transform:scale(1);}}
+  `;
+  document.head.appendChild(style);
+  setPhase();
+  bTimer=setInterval(()=>{
+    tl--;
+    const num=document.getElementById('b-num');
+    if(num) num.textContent=Math.max(tl,0);
+    // speak phase label at start
+    if(tl===phases[pi].d-1 && pi!==lastSpokenPhase){
+      lastSpokenPhase=pi; speak(phases[pi].speak);
+    }
+    if(tl<=0){
+      pi=(pi+1)%3;
+      if(pi===0){
+        done++;
+        if(done>=3){
+          clearInterval(bTimer);
+          const lbl=document.getElementById('b-lbl');
+          const n=document.getElementById('b-num');
+          if(lbl) lbl.textContent='完成';
+          if(n) n.textContent='✓';
+          document.getElementById('breathe-guide').innerHTML=guides[2];
+          document.getElementById('breathe-next').style.display='block';
+          setTimeout(()=>speak('呼吸完成了。身體已慢慢放鬆，請繼續進入意念引導。'),400);
+          return;
+        }
+        const g=document.getElementById('breathe-guide');
+        g.style.opacity='0';
+        setTimeout(()=>{g.innerHTML=guides[done];g.style.opacity='1';},700);
+        setTimeout(()=>speak(vGuides[done]),1000);
+      }
+      tl=phases[pi].d;
+      setPhase();
+    }
+  },1000);
+}
+
+/* ══════════════════════════════
+   ORB STAGE
+══════════════════════════════ */
+function buildOrbStage(){
+  const h=sHex, r=sRgb;
+  const durations=[5,4.2,3.5,2.8];
+  const delays=[0,.8,1.6,2.4];
+  const insets=[0,35,70,105];
+  let rings='';
+  insets.forEach((ins,i)=>{
+    rings+=`<div class="o-ring" style="inset:${ins}px;border-color:rgba(${r},${.15+i*.1});--ord:${durations[i]}s;--orl:${delays[i]}s;"></div>`;
+  });
+  // Rays
+  let rays='<div class="o-rays">';
+  for(let i=0;i<16;i++){
+    const rot=i*22.5;
+    const ht=15+Math.floor(Math.random()*40);
+    const rpd=(1.8+Math.random()*1.5).toFixed(1);
+    const rpd2=(Math.random()*2).toFixed(1);
+    rays+=`<div class="o-ray" style="height:${ht}px;background:${h};transform:rotate(${rot}deg) translate(-50%,-100%);--rpd:${rpd}s;--rpd2:${rpd2}s;opacity:.25;"></div>`;
+  }
+  rays+='</div>';
+  // Particles
+  let particles='<div class="o-particles">';
+  for(let i=0;i<10;i++){
+    const rot=i*36;
+    const dist=80+Math.random()*40;
+    const ptd=(1+Math.random()*2).toFixed(1);
+    const ptdl=(Math.random()*2).toFixed(1);
+    particles+=`<div class="o-particle" style="background:${h};transform:rotate(${rot}deg) translate(-50%,-${dist}px);--ptd:${ptd}s;--ptdl:${ptdl}s;"></div>`;
+  }
+  particles+='</div>';
+  document.getElementById('orb-stage').innerHTML=`
+    ${rings}${rays}${particles}
+    <div class="o-core" style="background:radial-gradient(circle,rgba(${r},.9) 0%,rgba(${r},.4) 50%,transparent 100%);box-shadow:0 0 35px rgba(${r},.6),0 0 70px rgba(${r},.3),0 0 120px rgba(${r},.12);"></div>`;
+}
+
+/* ══════════════════════════════
+   MEDITATE
+══════════════════════════════ */
+const MP=[
+  t=>`將你的意念，集中在${t}`,
+  ()=>'感受宇宙中無限的智慧與能量<br>正向你聚集',
+  ()=>'這股能量穿越空間<br>透過你的手心，進入你的身體',
+  t=>`你的${t}<br>正被溫暖的光芒包圍`,
+  ()=>'每一次呼吸，能量就加深一分<br>感受那份溫暖與寧靜'
+];
+const MV=[
+  t=>`將你的意念，集中在${t}。`,
+  ()=>'感受宇宙中無限的智慧與能量，正在向你聚集。',
+  ()=>'這股能量穿越空間，透過你的手心，進入你的身體。',
+  t=>`你的${t}，正在被溫暖的光芒包圍。`,
+  ()=>'每一次呼吸，能量就加深一分，感受那份溫暖與寧靜。'
+];
+function initMeditate(){
+  buildOrbStage();
+  const prog=document.getElementById('med-prog');
+  prog.style.background=`linear-gradient(90deg,rgba(${sRgb},.4),${sHex})`;
+  prog.style.width='0%';
+  const btn=document.getElementById('emit-go'); btn.style.display='none';
+  const guide=document.getElementById('med-guide'); guide.style.color=sHex;
+  let idx=0;
+  guide.innerHTML=MP[0](sPart);
+  setTimeout(()=>speak(MV[0](sPart)),600);
+  mTimer=setInterval(()=>{
+    idx++;
+    if(idx>=MP.length){
+      clearInterval(mTimer); prog.style.width='100%';
+      btn.style.display='block';
+      setTimeout(()=>speak('意念引導完成。請按開始發功，將手機輕輕靠近患部。'),400);
+      return;
+    }
+    guide.style.opacity='0';
+    setTimeout(()=>{
+      guide.innerHTML=MP[idx](sPart); guide.style.opacity='1';
+      prog.style.width=((idx/MP.length)*100)+'%';
+    },700);
+    setTimeout(()=>speak(MV[idx](sPart)),1400);
+  },5500);
+}
+
+/* ══════════════════════════════
+   EMIT SCREEN BUILD
+══════════════════════════════ */
+function buildEmitScreen(){
+  const h=sHex, r=sRgb;
+  const sc=document.getElementById('emit-screen');
+  sc.style.borderColor=`rgba(${r},.55)`;
+  sc.style.boxShadow=`0 0 60px rgba(${r},.22),inset 0 0 80px rgba(${r},.1)`;
+  document.getElementById('emit-nebula').style.background=
+    `radial-gradient(ellipse 80% 80% at 50% 50%,rgba(${r},.28) 0%,rgba(${r},.08) 55%,transparent 100%)`;
+  document.querySelectorAll('.emit-w').forEach(w=>{
+    w.style.borderColor=`rgba(${r},.5)`;
+    w.style.boxShadow=`0 0 16px rgba(${r},.25)`;
+  });
+  document.getElementById('emit-center').style.background=
+    `radial-gradient(circle,rgba(${r},.95) 0%,rgba(${r},.5) 50%,transparent 100%)`;
+  document.getElementById('emit-center').style.boxShadow=`0 0 25px rgba(${r},.6)`;
+  document.getElementById('emit-lbl').style.color=h;
+  document.getElementById('emit-prog').style.background=`linear-gradient(90deg,rgba(${r},.4),${h})`;
+}
+
+/* ══════════════════════════════
+   EMIT
+══════════════════════════════ */
+const EP=[
+  ()=>'你的身體正在接收<br>感受那股溫暖流動',
+  t=>`${t}正在修復，正在平衡`,
+  ()=>'宇宙的智慧<br>透過螢幕傳入你的身體',
+  ()=>'繼續保持意念<br>感受那份能量的流動',
+  ()=>'你的身體知道如何修復<br>只需靜靜感受'
+];
+const EV=[
+  ()=>'你的身體正在接收，感受那股溫暖流動。',
+  t=>`${t}正在修復，正在平衡。`,
+  ()=>'宇宙的智慧，透過螢幕傳入你的身體。',
+  ()=>'繼續保持意念，感受那份能量的流動。',
+  ()=>'你的身體知道如何修復，只需靜靜感受。'
+];
+function initEmit(){
+  buildEmitScreen();
+  document.getElementById('emit-part').textContent=sPart;
+  document.getElementById('emit-part').style.color=sHex;
+  eTotal=sMin*60; eLeft=eTotal; updateTimer();
+  let pi=0;
+  const guide=document.getElementById('emit-guide'); guide.style.color=sHex;
+  guide.innerHTML=EP[0](sPart);
+  setTimeout(()=>speak(`發功開始。請將手機輕輕靠近${sPart}，感受能量傳入。`),700);
+  eTimer=setInterval(()=>{
+    eLeft--; updateTimer();
+    document.getElementById('emit-prog').style.width=((eTotal-eLeft)/eTotal*100)+'%';
+    if(eLeft%30===0 && eLeft>0){
+      pi=(pi+1)%EP.length;
+      guide.style.opacity='0';
+      setTimeout(()=>{guide.innerHTML=EP[pi](sPart);guide.style.opacity='1';},600);
+      setTimeout(()=>speak(EV[pi](sPart)),1000);
+    }
+    if(eLeft<=0){clearInterval(eTimer);finishSession();}
+  },1000);
+}
+function updateTimer(){
+  const m=Math.floor(eLeft/60), s=eLeft%60;
+  document.getElementById('timer-big').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function finishEarly(){clearInterval(eTimer);finishSession();}
+function finishSession(){
+  // close orb
+  const orb=document.getElementById('close-orb');
+  orb.style.background=`radial-gradient(circle,rgba(${sRgb},.8) 0%,rgba(${sRgb},.3) 55%,transparent 100%)`;
+  orb.style.boxShadow=`0 0 40px rgba(${sRgb},.45),0 0 80px rgba(${sRgb},.2)`;
+  const tag=document.getElementById('close-tag');
+  tag.textContent=`已療癒 · ${sPart}`; tag.style.color=sHex;
+  tag.style.borderColor=`rgba(${sRgb},.38)`; tag.style.background=`rgba(${sRgb},.08)`;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('p-close').classList.add('active');
+  window.scrollTo(0,0);
+  setTimeout(()=>speak(`發功圓滿完成。${sPart}已接收充足能量。慢慢動動手指，輕輕睜開眼睛，感謝宇宙智慧的流動。`),600);
+}
+function stopSession(){
+  clearAll();
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('p-title').classList.add('active');
+  window.scrollTo(0,0);
+  setTimeout(()=>speak('療程已結束，祝您身心舒暢。'),400);
+}
+function clearAll(){clearInterval(bTimer);clearInterval(mTimer);clearInterval(eTimer);}
+function selectFeel(el){document.querySelectorAll('.feel-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function restart(){document.querySelectorAll('.part-btn').forEach(b=>b.classList.remove('selected'));document.querySelectorAll('.dur-btn').forEach(b=>{b.classList.remove('selected');if(b.dataset.min==='5')b.classList.add('selected');});sMin=5;goTo('p-select');}
+
+/* ══════════════════════════════
+   VOICE — Natural TTS
+══════════════════════════════ */
+let voiceQueue=[], isSpeaking=false;
+
+function speak(text){
+  if(!speechOn||!('speechSynthesis' in window)) return;
+  // clear queue & current
+  voiceQueue=[];
+  window.speechSynthesis.cancel();
+  isSpeaking=false;
+  // Split into natural sentences for more human pacing
+  const sentences=text.split(/[，。？！、]/).filter(s=>s.trim().length>0);
+  voiceQueue=sentences.slice();
+  speakNext();
+}
+
+function speakNext(){
+  if(!voiceQueue.length){isSpeaking=false;hideVoiceDot();return;}
+  const chunk=voiceQueue.shift();
+  if(!chunk.trim()){speakNext();return;}
+  isSpeaking=true;showVoiceDot();
+  const u=new SpeechSynthesisUtterance(chunk+'。');
+  u.lang='zh-TW';
+  u.rate=0.75;        // slow, calm
+  u.pitch=1.08;       // slightly warm
+  u.volume=0.88;
+  // Select best voice
+  const vs=window.speechSynthesis.getVoices();
+  // Priority: zh-TW female > zh-TW > zh > any
+  const preferred=vs.find(v=>v.lang==='zh-TW'&&/female|woman|girl|mei|ling|siri/i.test(v.name))
+    ||vs.find(v=>v.lang==='zh-TW')
+    ||vs.find(v=>v.lang.startsWith('zh'))
+    ||null;
+  if(preferred) u.voice=preferred;
+  u.onend=()=>{
+    // natural pause between sentences
+    setTimeout(speakNext, 320);
+  };
+  u.onerror=()=>{ isSpeaking=false; hideVoiceDot(); speakNext(); };
+  window.speechSynthesis.speak(u);
+}
+
+function showVoiceDot(){
+  const dot=document.getElementById('voice-dot');
+  dot.classList.add('speaking');
+  document.getElementById('vd-ring').style.background=sHex;
+}
+function hideVoiceDot(){
+  document.getElementById('voice-dot').classList.remove('speaking');
+}
+
+function tryVoice(){
+  speak('歡迎來到宇宙發功。請放鬆身心，感受宇宙大智慧的流動，讓我們一起開始療癒的旅程。');
+}
+
+// Preload voices
+if('speechSynthesis' in window){
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.addEventListener('voiceschanged',()=>{window.speechSynthesis.getVoices();});
+}
+
+/* ══════════════════════════════
+   AMBIENT MUSIC
+══════════════════════════════ */
+function initAudio(){
+  if(audioCtx) return;
+  try{
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const master=audioCtx.createGain(); master.gain.value=0; master.connect(audioCtx.destination);
+    // Fade in gently
+    master.gain.linearRampToValueAtTime(.15, audioCtx.currentTime+3);
+
+    // === DRONE PADS ===
+    const droneData=[[55,.3],[82.41,.22],[110,.18],[164.81,.12]];
+    droneData.forEach(([f,v])=>{
+      const o=audioCtx.createOscillator();
+      const g=audioCtx.createGain();
+      const lp=audioCtx.createBiquadFilter();
+      lp.type='lowpass'; lp.frequency.value=350; lp.Q.value=0.5;
+      o.type='sine'; o.frequency.value=f; g.gain.value=v;
+      // slight detune for warmth
+      o.detune.value=(Math.random()*6-3);
+      o.connect(lp); lp.connect(g); g.connect(master); o.start();
+    });
+
+    // === SLOW BREATHING LFO on master ===
+    const lfo=audioCtx.createOscillator();
+    const lg=audioCtx.createGain();
+    lfo.frequency.value=.08; lg.gain.value=.04;
+    lfo.connect(lg); lg.connect(master.gain); lfo.start();
+
+    // === SECOND HARMONIC TEXTURE ===
+    const o2=audioCtx.createOscillator();
+    const g2=audioCtx.createGain();
+    const lp2=audioCtx.createBiquadFilter();
+    lp2.type='lowpass'; lp2.frequency.value=280;
+    o2.type='triangle'; o2.frequency.value=220; g2.gain.value=.06;
+    o2.connect(lp2); lp2.connect(g2); g2.connect(master); o2.start();
+
+    // === PENTATONIC CRYSTAL BELLS ===
+    // C pentatonic: C4 E4 G4 A4 C5 E5 G5
+    const bellNotes=[261.63,329.63,392,440,523.25,659.25,783.99];
+    let bellIdx=0;
+    function bell(){
+      if(!audioCtx||audioCtx.state==='closed') return;
+      const freq=bellNotes[bellIdx%bellNotes.length]; bellIdx++;
+      const o=audioCtx.createOscillator();
+      const e=audioCtx.createGain();
+      const rev=audioCtx.createConvolver ? null : null; // skip reverb for compat
+      const now=audioCtx.currentTime;
+      o.type='sine'; o.frequency.value=freq;
+      // shimmer: tiny detune
+      o.detune.value=(Math.random()*8-4);
+      e.gain.setValueAtTime(0,now);
+      e.gain.linearRampToValueAtTime(.07,now+.04);
+      e.gain.exponentialRampToValueAtTime(.001,now+5.5);
+      o.connect(e); e.connect(master);
+      o.start(now); o.stop(now+6);
+      // occasional harmonic overtone
+      if(Math.random()>.55){
+        const o3=audioCtx.createOscillator();
+        const e3=audioCtx.createGain();
+        o3.type='sine'; o3.frequency.value=freq*2; o3.detune.value=3;
+        e3.gain.setValueAtTime(0,now);
+        e3.gain.linearRampToValueAtTime(.02,now+.05);
+        e3.gain.exponentialRampToValueAtTime(.001,now+3);
+        o3.connect(e3); e3.connect(master); o3.start(now); o3.stop(now+4);
+      }
+      setTimeout(bell, 1800+Math.random()*4500);
+    }
+    bell();
+
+    // === VERY SOFT HIGHER PAD ===
+    const o4=audioCtx.createOscillator();
+    const g4=audioCtx.createGain();
+    const lp4=audioCtx.createBiquadFilter();
+    lp4.type='bandpass'; lp4.frequency.value=440; lp4.Q.value=1;
+    o4.type='sine'; o4.frequency.value=330; g4.gain.value=.05;
+    o4.connect(lp4); lp4.connect(g4); g4.connect(master); o4.start();
+
+  }catch(e){ musicOn=false; }
+}
+
+function toggleMusic(){
+  if(!audioCtx) initAudio();
+  const bars=document.getElementById('m-bars');
+  if(musicOn){
+    if(audioCtx) audioCtx.suspend();
+    window.speechSynthesis&&window.speechSynthesis.cancel();
+    bars.classList.add('paused'); musicOn=false; speechOn=false;
+  } else {
+    if(audioCtx) audioCtx.resume();
+    bars.classList.remove('paused'); musicOn=true; speechOn=true;
+  }
+}
+
+// First-click unlock
+document.addEventListener('click',()=>{
+  if(!audioCtx){ initAudio(); }
+  else if(audioCtx.state==='suspended'&&musicOn){ audioCtx.resume(); }
+},{passive:true});
+</script>
+</body>
+</html>
